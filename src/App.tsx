@@ -1,16 +1,16 @@
 import { useState, type ChangeEvent } from 'react'
-import './App.css'
 import styled from 'styled-components'
-import { Button } from './components/Button'
 
-type Todo = {
-  title: string,
-  isCompleted: boolean,
-}
+import './App.css'
+import { Button } from './components/Button'
+import { TodoItem } from './features/todo/components/TodoItem'
+import type { Todo } from './features/todo/types'
+import { InputText } from './components/InputText'
 
 function App() {
   const [newTodo, setNewTodo] = useState('')
   const [todos, setTodos] = useState<Array<Todo>>([])
+  const [nextId, setNextId]= useState(1)
 
   const completedTodosCount: number = todos.filter((todo) => todo.isCompleted).length
   const uncompletedTodosCount: number = todos.length - completedTodosCount
@@ -26,13 +26,14 @@ function App() {
       return
     }
 
-    setTodos([...todos, { title: newTodo, isCompleted: false }])
+    setTodos([...todos, { id: nextId, title: newTodo, isCompleted: false }])
     setNewTodo('')
+    setNextId(nextId + 1)
   }
 
-  const onClickCheck = (title: string) => {
+  const onClickCheck = (id: number) => {
     const nextTodos = todos.map((todo) => {
-      if (todo.title === title) {
+      if (todo.id === id) {
         todo.isCompleted = !todo.isCompleted
         return todo
       } else {
@@ -43,9 +44,22 @@ function App() {
     setTodos(nextTodos)
   }
 
-  const onClickDelete = (title: string) => {
+  const onClickUpdate = (id: number, newTitle: string) => {
+    const nextTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.title = newTitle
+        return todo
+      } else {
+        return todo
+      }
+    })
+
+    setTodos(nextTodos)
+  }
+
+  const onClickDelete = (id: number) => {
     if (confirm("本当に削除してもよろしいですか？")) {
-      const nextTodos = todos.filter((todo) => todo.title !== title)
+      const nextTodos = todos.filter((todo) => todo.id !== id)
       setTodos(nextTodos)
     }
   }
@@ -53,7 +67,7 @@ function App() {
   return (
     <>
       <h1>Todo List</h1>
-      <StyledInput type="text" placeholder="やること" value={newTodo} onChange={onChangeTodo} />
+      <InputText value={newTodo} onChange={onChangeTodo} placeholder="やること" />
       <Button color='#11999e' onClick={onClickSave}>保存</Button>
       <StyledSummaryContainer>
         <StyledSummaryItem>全てのタスク：{todos.length}</StyledSummaryItem>
@@ -61,28 +75,11 @@ function App() {
         <StyledSummaryItem>未完了：{uncompletedTodosCount}</StyledSummaryItem>
       </StyledSummaryContainer>
       {todos.map((todo) => (
-        <StyledTodosContainer key={todo.title}>
-          <input type="checkbox" checked={todo.isCompleted} onClick={() => onClickCheck(todo.title)} />
-          <p>{todo.title}</p>
-          <Button color="#6c757d">編集</Button>
-          <Button color="#dc3545" onClick={() => onClickDelete(todo.title)}>削除</Button>
-        </StyledTodosContainer>
+        <TodoItem key={todo.title} todo={todo} onChangeCheck={onClickCheck} onClickUpdate={onClickUpdate} onClickDelete={onClickDelete} />
       ))}
     </>
   )
 }
-
-const StyledInput = styled.input`
-  padding: 8px 16px;
-  border-radius: 8px;
-  outline: none;
-  border: solid #ddd 1px;
-`
-
-const StyledTodosContainer = styled.div`
-  display: flex;
-  align-items: center;
-`
 
 const StyledSummaryContainer = styled.div`
   display: flex;
