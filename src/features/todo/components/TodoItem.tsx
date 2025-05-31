@@ -37,7 +37,7 @@ export const TodoItem: FC<Props> = memo((props) => {
       ) : (
         <StyledTodoContainer>
           <input type="checkbox" checked={todo.isCompleted} onChange={() => onChangeCheck(todo.id)} />
-          <p>{todo.title}</p>
+          {todo.isCompleted ? <p><s>{todo.title}</s></p> : <p>{todo.title}</p> }
           <Button color="#6c757d" onClick={() => onClickEdit(todo.title)}>編集</Button>
           <Button color="#dc3545" onClick={() => onClickDelete(todo.id)}>削除</Button>
         </StyledTodoContainer>
