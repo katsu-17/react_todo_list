@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react'
+import { useCallback, useState, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 
 import './App.css'
@@ -31,7 +31,7 @@ function App() {
     setNextId(nextId + 1)
   }
 
-  const onClickCheck = (id: number) => {
+  const onChangeCheck = useCallback((id: number) => {
     const nextTodos = todos.map((todo) => {
       if (todo.id === id) {
         todo.isCompleted = !todo.isCompleted
@@ -42,9 +42,9 @@ function App() {
     })
 
     setTodos(nextTodos)
-  }
+  }, [todos])
 
-  const onClickUpdate = (id: number, newTitle: string) => {
+  const onClickUpdate = useCallback((id: number, newTitle: string) => {
     const nextTodos = todos.map((todo) => {
       if (todo.id === id) {
         todo.title = newTitle
@@ -55,14 +55,14 @@ function App() {
     })
 
     setTodos(nextTodos)
-  }
+  }, [todos])
 
-  const onClickDelete = (id: number) => {
+  const onClickDelete = useCallback((id: number) => {
     if (confirm("本当に削除してもよろしいですか？")) {
       const nextTodos = todos.filter((todo) => todo.id !== id)
       setTodos(nextTodos)
     }
-  }
+  }, [todos])
 
   return (
     <>
@@ -75,7 +75,7 @@ function App() {
         <StyledSummaryItem>未完了：{uncompletedTodosCount}</StyledSummaryItem>
       </StyledSummaryContainer>
       {todos.map((todo) => (
-        <TodoItem key={todo.title} todo={todo} onChangeCheck={onClickCheck} onClickUpdate={onClickUpdate} onClickDelete={onClickDelete} />
+        <TodoItem key={todo.title} todo={todo} onChangeCheck={onChangeCheck} onClickUpdate={onClickUpdate} onClickDelete={onClickDelete} />
       ))}
     </>
   )
@@ -84,6 +84,7 @@ function App() {
 const StyledSummaryContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
 `
 
 const StyledSummaryItem = styled.p`

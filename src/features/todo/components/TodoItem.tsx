@@ -1,6 +1,7 @@
+import { memo, useState, type ChangeEvent, type FC } from "react"
 import styled from "styled-components"
+
 import { Button } from "../../../components/Button"
-import { useState, type ChangeEvent, type FC } from "react"
 import type { Todo } from "../types"
 import { InputText } from "../../../components/InputText"
 
@@ -11,12 +12,11 @@ type Props = {
   onClickDelete: (id: number) => void,
 }
 
-export const TodoItem: FC<Props> = (props) => {
+export const TodoItem: FC<Props> = memo((props) => {
   const [isEditing, setIsEditing] = useState(false)
   const [editingTitle, setEditingTitle] = useState('')
 
   const { todo, onChangeCheck, onClickUpdate, onClickDelete } = props
-  console.log(todo)
 
   const onClickEdit = (title: string) => {
     setIsEditing(true)
@@ -36,17 +36,18 @@ export const TodoItem: FC<Props> = (props) => {
         </StyledTodoContainer>
       ) : (
         <StyledTodoContainer>
-        <input type="checkbox" checked={todo.isCompleted} onChange={() => onChangeCheck(todo.id)} />
-        <p>{todo.title}</p>
-        <Button color="#6c757d" onClick={() => onClickEdit(todo.title)}>編集</Button>
-        <Button color="#dc3545" onClick={() => onClickDelete(todo.id)}>削除</Button>
+          <input type="checkbox" checked={todo.isCompleted} onChange={() => onChangeCheck(todo.id)} />
+          <p>{todo.title}</p>
+          <Button color="#6c757d" onClick={() => onClickEdit(todo.title)}>編集</Button>
+          <Button color="#dc3545" onClick={() => onClickDelete(todo.id)}>削除</Button>
         </StyledTodoContainer>
       )}
     </>
   )
-}
+})
 
 const StyledTodoContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
 `
