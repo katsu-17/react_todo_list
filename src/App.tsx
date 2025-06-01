@@ -12,14 +12,17 @@ function App() {
   const [todos, setTodos] = useState<Array<Todo>>([])
   const [nextId, setNextId]= useState(1)
 
+  const todosCount = todos.length
   const completedTodosCount: number = todos.filter((todo) => todo.isCompleted).length
-  const uncompletedTodosCount: number = todos.length - completedTodosCount
+  const uncompletedTodosCount: number = todosCount - completedTodosCount
 
   const onChangeTodo = (e: ChangeEvent<HTMLInputElement>) => {
     setNewTodo(e.target.value)
   }
 
   const onClickSave = () => {
+    if (newTodo === "") return
+
     const hasSameTodo = todos.find((todo) => todo.title === newTodo)
     if (hasSameTodo) {
       alert('すでに登録済みです')
@@ -70,12 +73,12 @@ function App() {
       <InputText value={newTodo} onChange={onChangeTodo} placeholder="やること" />
       <Button color='#11999e' onClick={onClickSave}>保存</Button>
       <StyledSummaryContainer>
-        <StyledSummaryItem>全てのタスク：{todos.length}</StyledSummaryItem>
+        <StyledSummaryItem>全てのタスク：{todosCount}</StyledSummaryItem>
         <StyledSummaryItem>完了済み：{completedTodosCount}</StyledSummaryItem>
         <StyledSummaryItem>未完了：{uncompletedTodosCount}</StyledSummaryItem>
       </StyledSummaryContainer>
       {todos.map((todo) => (
-        <TodoItem key={todo.title} todo={todo} onChangeCheck={onChangeCheck} onClickUpdate={onClickUpdate} onClickDelete={onClickDelete} />
+        <TodoItem key={todo.id} todo={todo} onChangeCheck={onChangeCheck} onClickUpdate={onClickUpdate} onClickDelete={onClickDelete} />
       ))}
     </>
   )
